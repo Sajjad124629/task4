@@ -1,0 +1,10 @@
+.git
+.idea
+vendor/
+var/
+.env.local
+.env.*.local
+node_modules/
+docker-compose.yml
+Dockerfile
+docker-entrypoint.sh

@@ -1,0 +1,67 @@
+{% extends 'layouts/auth.html.twig' %}
+
+{% block title %}Register - Modernize{% endblock %}
+
+{% block content %}
+<div class="position-relative overflow-hidden radial-gradient min-vh-100 w-100">
+  <div class="position-relative z-index-5">
+    <div class="row">
+      <div class="col-xl-7 col-xxl-8">
+        <a href="#" class="text-nowrap logo-img d-block px-4 py-9 w-100">
+          <img src="{{ asset('assets/images/logos/dark-logo.svg') }}" class="dark-logo" alt="Logo-Dark" />
+          <img src="{{ asset('assets/images/logos/light-logo.svg') }}" class="light-logo" alt="Logo-light" />
+        </a>
+        <div class="d-none d-xl-flex align-items-center justify-content-center h-n80">
+          <img src="{{ asset('assets/images/backgrounds/login-security.svg') }}" alt="modernize-img" class="img-fluid" width="500">
+        </div>
+      </div>
+      <div class="col-xl-5 col-xxl-4">
+        <div class="authentication-login min-vh-100 bg-body row justify-content-center align-items-center p-4">
+          <div class="auth-max-width col-sm-8 col-md-6 col-xl-7 px-4">
+            <h2 class="mb-1 fs-7 fw-bolder">Welcome to Admin</h2>
+            <p class="mb-7">Create an account</p>
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {{ form_start(registrationForm) }}
+              <div class="mb-3">
+                {{ form_label(registrationForm.fullname) }}
+                {{ form_widget(registrationForm.fullname) }}
+              </div>
+              <div class="mb-3">
+                {{ form_label(registrationForm.email) }}
+                {{ form_widget(registrationForm.email) }}
+              </div>
+              <div class="mb-3">
+                {{ form_label(registrationForm.password) }}
+                <div class="input-group">
+                  {{ form_widget(registrationForm.password) }}
+                  <span class="input-group-text toggle-password" data-toggle="#{{ registrationForm.password.vars.id }}" style="cursor: pointer;">
+                    <i class="ti ti-eye fs-5"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="mb-4">
+                {{ form_label(registrationForm.address) }}
+                <div class="input-group">
+                  {{ form_widget(registrationForm.address) }}
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 py-8 mb-4 rounded-2">Sign Up</button>
+              <div class="d-flex align-items-center justify-content-center">
+                <p class="fs-4 mb-0 fw-medium">Already have an account?</p>
+                <a class="text-primary fw-medium ms-2" href="{{ path('app_login') }}">Sign In</a>
+              </div>
+            {{ form_end(registrationForm) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

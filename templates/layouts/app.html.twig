@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical" data-boxed-layout="full">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicon icon-->
+  <link rel="icon" type="image/svg+xml" href="{{ asset('assets/images/logos/favicon.svg') }}" />
+
+  <!-- Core Css -->
+  <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}" />
+
+  <title>{% block title %}Admin{% endblock %}</title>
+  
+  <!-- Toastr CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+  
+  {% block stylesheets %}{% endblock %}
+</head>
+
+<body class="link-sidebar">
+  <!-- Preloader -->
+  {% include 'components/preloader.html.twig' %}
+  <div id="main-wrapper">
+    <!-- Sidebar Start -->
+    {% include 'partial/sidebar.html.twig' %}
+    <!--  Sidebar End -->
+    <div class="page-wrapper">
+      <!--  Header Start -->
+      {% include 'partial/header.html.twig' %}
+      <!--  Header End -->
+      
+      {% include 'partial/sidebar_horizontal.html.twig' %}
+
+
+
+      <div class="body-wrapper">
+        <div class="container-fluid mw-100">
+          {% block content %}
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'components/customizer.html.twig' %}
+  <div class="dark-transparent sidebartoggler"></div>
+  <!-- Import Js Files -->
+  <script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ asset('assets/libs/simplebar/dist/simplebar.min.js') }}"></script>
+  <script src="{{ asset('assets/js/theme/app.init.js') }}?v=1.1"></script>
+  <script src="{{ asset('assets/js/theme/theme.js') }}"></script>
+  <script src="{{ asset('assets/js/theme/app.min.js') }}?v=1.1"></script>
+  <script src="{{ asset('assets/js/theme/sidebarmenu.js') }}"></script>
+
+  <!-- solar icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+
+  <!-- jQuery and Toastr JS for Flash Messages -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      toastr.options = {
+          "closeButton": true,
+          "progressBar": true,
+          "positionClass": "toast-top-right",
+      };
+      
+      {% for label, messages in app.flashes %}
+          {% for message in messages %}
+              // If label is 'danger' or 'error', use toastr.error. Otherwise use the label directly (success, info, warning)
+              var type = "{{ label }}" === 'danger' ? 'error' : "{{ label }}";
+              toastr[type]("{{ message|e('js') }}");
+          {% endfor %}
+      {% endfor %}
+    });
+  </script>
+
+  {% block javascripts %}{% endblock %}
+</body>
+
+</html>
