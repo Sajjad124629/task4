@@ -8,8 +8,8 @@ echo "Starting deployment setup..."
 sleep 5
 
 echo "Running database migrations..."
-# Run migrations automatically when the container starts in prod mode
-php bin/console doctrine:migrations:migrate --env=prod --no-interaction --allow-no-migration
+# Run schema update to automatically create tables since migrations are missing
+php bin/console doctrine:schema:update --force --env=prod
 
 echo "Setup complete. Starting Apache server..."
 # Execute the original CMD from Dockerfile (apache2-foreground)
