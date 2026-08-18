@@ -13,11 +13,12 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libzip-dev \
     libonig-dev \
+    libpq-dev \
     zip \
     unzip \
     git \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install pdo_mysql intl zip opcache mbstring \
+    && docker-php-ext-install pdo_mysql pdo_pgsql intl zip opcache mbstring \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
