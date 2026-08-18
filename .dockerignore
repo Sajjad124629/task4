@@ -7,4 +7,3 @@ var/
 node_modules/
 docker-compose.yml
 Dockerfile
-docker-entrypoint.sh
