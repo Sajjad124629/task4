@@ -240,11 +240,11 @@
                                     table.column(0).checkboxes.deselectAll();
                                     toggleToolbar();
                                     
-                                    // if (response.self_affected) {
-                                    //     setTimeout(function() {
-                                    //         window.location.reload();
-                                    //     }, 1500);
-                                    // }
+                                    if (response.self_affected) {
+                                        setTimeout(function() {
+                                            window.location.reload();
+                                        }, 1500);
+                                    }
                                 } else {
                                     toastr.error(response.message, response.title);
                                 }
