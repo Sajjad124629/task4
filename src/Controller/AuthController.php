@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use App\Service\UserMailer;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 
 class AuthController extends AbstractController
 {
@@ -58,13 +59,6 @@ class AuthController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
-            if ($existingUser) {
-                $this->addFlash('error', 'An account with this email already exists.');
-                return $this->render('pages/auth/register.html.twig', [
-                    'registrationForm' => $form->createView()
-                ]);
-            }
             $user->setPassword(
                 $userPasswordHasher->hashPassword($user, $user->getPassword())
             );
@@ -77,6 +71,8 @@ class AuthController extends AbstractController
 
                 $this->addFlash('success', 'Registration successful! Please check your email to confirm your account.');
                 return $this->redirectToRoute('app_dashboard');
+            } catch (UniqueConstraintViolationException $e) {
+                $this->addFlash('error', 'An account with this email already exists.');
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Registration Error: ' . $e->getMessage());
             }
