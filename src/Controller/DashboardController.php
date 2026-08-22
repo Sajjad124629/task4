@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Attribute\Auth;
+use App\Service\UserAction\UserActionRegistry;
 
 #[Route('/dashboard')]
 #[Auth]
@@ -57,13 +58,18 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/user-action', name: 'app_dashboard_user_action', methods: ['POST'])]
-    public function action(Request $request): Response
+    public function action(Request $request, UserActionRegistry $actionRegistry): Response
     {
-        $action = $request->request->get('action');
+        $actionName = $request->request->get('action');
         $ids = $request->request->all('ids');
 
         if (empty($ids) || !is_array($ids)) {
             return $this->jsonResponse('error', 'Please select at least one record!', 'Oops!');
+        }
+
+        $actionHandler = $actionRegistry->getAction($actionName);
+        if (!$actionHandler) {
+            return $this->jsonResponse('error', 'Invalid action specified.', 'Error');
         }
 
         $userRepository = $this->entityManager->getRepository(User::class);
@@ -74,34 +80,17 @@ class DashboardController extends AbstractController
         }
 
         foreach ($users as $user) {
-            switch ($action) {
-                case 'block':
-                    $user->setStatus(User::STATUS_BLOCKED);
-                    break;
-                case 'unblock':
-                    if ($user->getStatus() === User::STATUS_BLOCKED) {
-                        $user->setStatus(User::STATUS_ACTIVE);
-                    }
-                    break;
-                case 'delete':
-                    $this->entityManager->remove($user);
-                    break;
-                case 'delete_unverified':
-                    if ($user->getStatus() === User::STATUS_UNVERIFIED) {
-                        $this->entityManager->remove($user);
-                    }
-                    break;
-            }
+            $actionHandler->execute($user);
         }
 
         $this->entityManager->flush();
+
         /** @var User $currentUser */
         $currentUser = $this->getUser();
         $selfAffected = false;
-        if (in_array($currentUser->getId(), $ids)) {
-            if (in_array($action, ['block', 'delete'])) {
-                $selfAffected = true;
-            }
+
+        if (in_array($currentUser->getId(), $ids) && $actionHandler->isSelfAffecting()) {
+            $selfAffected = true;
         }
 
         return $this->jsonResponse(

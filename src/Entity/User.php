@@ -39,6 +39,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 20)]
     private ?string $status = self::STATUS_UNVERIFIED;
 
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $previousStatus = null;
+
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $lastSeen = null;
 
@@ -131,6 +134,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setStatus(string $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getPreviousStatus(): ?string
+    {
+        return $this->previousStatus;
+    }
+
+    public function setPreviousStatus(?string $previousStatus): static
+    {
+        $this->previousStatus = $previousStatus;
 
         return $this;
     }
