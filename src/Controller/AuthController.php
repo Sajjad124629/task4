@@ -107,8 +107,13 @@ class AuthController extends AbstractController
         } elseif ($user->getStatus() === User::STATUS_ACTIVE) {
             $this->addFlash('info', 'Your email address is already verified.');
         } elseif ($user->getStatus() === User::STATUS_BLOCKED) {
-            // Nota bene: Clicking the link in the e-mail changes the status from "unverified" to "active" ("blocked" stays "blocked").
-            $this->addFlash('error', 'Your account is blocked.');
+            if ($user->getPreviousStatus() === User::STATUS_UNVERIFIED) {
+                $user->setPreviousStatus(User::STATUS_ACTIVE);
+                $entityManager->flush();
+                $this->addFlash('success', 'Your email address has been verified, but your account is currently blocked.');
+            } else {
+                $this->addFlash('error', 'Your account is blocked.');
+            }
         }
 
         return $this->redirectToRoute('app_login');
